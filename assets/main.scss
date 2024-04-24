@@ -1,0 +1,13 @@
+$background_color: #f0f0f0;
+$color: black;
+@mixin font {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  @include font;
+  background-color: $background_color;
+  color: $color;
+}
