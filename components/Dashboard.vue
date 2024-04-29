@@ -1,4 +1,4 @@
-<script setup lang="js">
+<script setup lang="ts">
 import { logout } from '../lib/api.js'
 import { jwtDecode } from 'jwt-decode'
 
@@ -6,13 +6,17 @@ definePageMeta({
   middleware: 'dashboard-guard',
 })
 
+const jwtData = localStorage.getItem('jwt')
+let decodedJwt: any = null
+
+if (typeof jwtData === 'string') {
+  decodedJwt = jwtDecode(jwtData)
+}
+
 async function logOut() {
   await logout()
   await navigateTo('/login')
 }
-
-const jwtData = localStorage.getItem('jwt')
-const decodedJwt = jwtDecode(jwtData)
 </script>
 
 <template>
