@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { login } from '../lib/api.js'
+import { ref } from 'vue'
 
 const credentials = {
   email: '',
   password: '',
 }
+let error = ref<any>(null)
 
 async function userLogin() {
   try {
     await login(credentials)
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    error.value = err
   }
 }
 </script>
@@ -42,7 +44,9 @@ async function userLogin() {
           <button type="submit">Login</button>
         </div>
       </form>
-      <!-- <p v-if="userLogin().response.status === 401">Invalid credentials</p> -->
+      <p v-if="error === 'Invalid credentials'" class="error">
+        Invalid credentials
+      </p>
     </div>
   </div>
 </template>
@@ -98,5 +102,9 @@ input {
   border-width: 0.1rem;
   padding: 0.5rem;
   width: 15rem;
+}
+
+.error {
+  color: red;
 }
 </style>
