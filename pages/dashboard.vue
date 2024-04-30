@@ -1,7 +1,12 @@
-<script></script>
+<script>
+definePageMeta({
+  middleware: 'dashboard-guard',
+})
+</script>
 
 <template>
   <div>
+    <Header />
     <Dashboard />
   </div>
 </template>
