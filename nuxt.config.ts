@@ -8,6 +8,11 @@ export default defineNuxtConfig({
     public: {
       login: process.env.LOGIN,
       profile: process.env.PROFILE,
+      all_users: process.env.ALL_USERS,
+      user: process.env.USER,
+      create_user: process.env.CREATE_USER,
+      update_user: process.env.UPDATE_USER,
+      delete_user: process.env.DELETE_USER,
     },
   },
 })

@@ -14,5 +14,6 @@ definePageMeta({
 <style lang="scss" scoped>
 h2 {
   margin-top: 2rem;
+  margin-left: 1rem;
 }
 </style>
