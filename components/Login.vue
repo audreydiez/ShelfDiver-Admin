@@ -44,9 +44,7 @@ async function userLogin() {
           <button type="submit">Login</button>
         </div>
       </form>
-      <p v-if="error === 'Invalid credentials'" class="error">
-        Invalid credentials
-      </p>
+      <p v-if="error" class="error">{{ error }}</p>
     </div>
   </div>
 </template>

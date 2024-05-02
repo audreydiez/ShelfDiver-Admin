@@ -6,7 +6,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     let jwt = null
     if (typeof localStorage !== 'undefined') {
       jwt = localStorage.getItem('jwt')
-      console.log(jwt)
     }
 
     // If there's no jwt in LS, redirect to the login page.
@@ -23,7 +22,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
           Authorization: `Bearer ${jwt}`,
         },
       })
-      console.log(response.status)
 
       // Redirects to the login page if the provided jwt isn't validated by the back-end side.
       if (response.status === 401) {

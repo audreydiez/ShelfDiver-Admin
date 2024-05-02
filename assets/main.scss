@@ -1,11 +1,16 @@
 $background_color: #f0f0f0;
-$color: black;
+$color: #525659;
 @mixin font {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 body {
   @include font;
   background-color: $background_color;
