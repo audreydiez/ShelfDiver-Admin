@@ -28,6 +28,13 @@ const { data: users } = await useFetch<User[]>(
 <template>
   <div class="users">
     <h2>Liste des Utilisateurs</h2>
+    <NuxtLink to="/users/new-user" class="add_link"
+      ><img
+        src="../../assets/img/add_icon.png"
+        alt="search_icon"
+        width="50px"
+        height="50px"
+    /></NuxtLink>
     <table class="user-table">
       <thead>
         <tr>
@@ -94,7 +101,6 @@ const { data: users } = await useFetch<User[]>(
 
 .user-table {
   margin: auto;
-  margin-top: 5rem;
   border-collapse: collapse;
 }
 
@@ -119,6 +125,10 @@ const { data: users } = await useFetch<User[]>(
 
 .link {
   margin: 0.1rem;
+}
+
+.add_link {
+  margin-left: 73rem;
 }
 
 @media (max-width: 992px) {
