@@ -5,10 +5,12 @@ definePageMeta({
 </script>
 
 <template>
-  <div>
-    <Header />
-    <h2><strong style="color: black">Produits</strong> - Dashboard</h2>
-  </div>
+  <main>
+    <div>
+      <Header />
+      <h2><strong style="color: black">Produits</strong> - Dashboard</h2>
+    </div>
+  </main>
 </template>
 
 <style lang="scss" scoped>

@@ -4,18 +4,14 @@ import { logout } from '../lib/api.js'
 
 const jwtData = localStorage.getItem('jwt')
 let decodedJwt: any = null
+let isOpen = ref(false)
 
 if (typeof jwtData === 'string') {
   decodedJwt = jwtDecode(jwtData)
 }
 
 function toggleMenu(): void {
-  const menu = document.getElementById('menu')
-  if (menu && menu.style.display === 'none') {
-    menu.style.display = 'block'
-  } else if (menu) {
-    menu.style.display = 'none'
-  }
+  isOpen.value = !isOpen.value
 }
 
 async function logOut() {
@@ -39,7 +35,7 @@ async function logOut() {
         <div class="circle">
           <div class="letter">{{ decodedJwt.username[0] }}</div>
         </div>
-        <div class="menu" id="menu">
+        <div class="menu" :class="isOpen ? 'open' : 'close'" id="menu">
           <button @click="logOut()" class="menu-item">Déconnexion</button>
         </div>
         <p class="user-name">{{ decodedJwt.username }}</p>
@@ -108,7 +104,6 @@ h1 {
 }
 
 .logo {
-  // height: 70%;
   margin-top: 0.6rem;
   margin-left: 1rem;
 }
@@ -181,7 +176,7 @@ li {
 }
 
 .menu {
-  position: absolute;
+  position: fixed;
   top: 50px;
   right: 0;
   background-color: #fff;
@@ -209,5 +204,13 @@ li {
 
 .user-name {
   color: white;
+}
+
+.open {
+  display: block;
+}
+
+.close {
+  display: none;
 }
 </style>

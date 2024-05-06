@@ -1,9 +1,11 @@
 <script></script>
 
 <template>
-  <div>
-    <Login />
-  </div>
+  <main>
+    <div>
+      <Login />
+    </div>
+  </main>
 </template>
 
 <style lang="scss" scoped></style>

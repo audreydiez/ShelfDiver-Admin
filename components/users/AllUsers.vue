@@ -4,14 +4,25 @@ if (typeof localStorage !== 'undefined') {
   jwt = localStorage.getItem('jwt')
 }
 
+interface User {
+  id: number
+  email: string
+  role: string
+  lastname: string
+  firstname: string
+}
+
 const runtimeConfig = useRuntimeConfig()
-const { data: users } = await useFetch(`${runtimeConfig.public.all_users}`, {
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${jwt}`,
+const { data: users } = await useFetch<User[]>(
+  `${runtimeConfig.public.users}/all_users`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${jwt}`,
+    },
   },
-})
+)
 </script>
 
 <template>
@@ -39,21 +50,21 @@ const { data: users } = await useFetch(`${runtimeConfig.public.all_users}`, {
             <NuxtLink to="/users/user:id" class="link"
               ><img
                 src="../../assets/img/search_icon.png"
-                alt="home_icon"
+                alt="search_icon"
                 width="32px"
                 height="32px"
             /></NuxtLink>
             <NuxtLink to="/users/update" class="link"
               ><img
                 src="../../assets/img/edit_icon.png"
-                alt="home_icon"
+                alt="edit_icon"
                 width="32px"
                 height="32px"
             /></NuxtLink>
             <NuxtLink to="/users/delete" class="link"
               ><img
                 src="../../assets/img/delete_icon.png"
-                alt="home_icon"
+                alt="delete_icon"
                 width="32px"
                 height="32px"
             /></NuxtLink>

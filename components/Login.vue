@@ -18,47 +18,51 @@ async function userLogin() {
 </script>
 
 <template>
-  <div class="login_card">
-    <div class="login_content">
-      <h1>Login page</h1>
-      <form @submit.prevent="userLogin">
-        <div class="email_field">
-          <label for="email"></label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Email address"
-            v-model="credentials.email"
-          />
-        </div>
-        <div class="pass_field">
-          <label for="password"></label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Password"
-            v-model="credentials.password"
-          />
-        </div>
-        <div>
-          <button type="submit">Login</button>
-        </div>
-      </form>
-      <p v-if="error" class="error">{{ error }}</p>
+  <div class="container">
+    <div class="login_card">
+      <div class="login_content">
+        <h1>Se connecter</h1>
+        <form @submit.prevent="userLogin">
+          <div class="email_field">
+            <label for="email"></label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Email"
+              v-model="credentials.email"
+            />
+          </div>
+          <div class="pass_field">
+            <label for="password"></label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Mot de passe"
+              v-model="credentials.password"
+            />
+          </div>
+          <div>
+            <button type="submit">Connexion</button>
+          </div>
+        </form>
+        <p v-if="error" class="error">{{ error }}</p>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.login_card {
+.container {
+  background-color: #f0f0f0;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin-top: 12rem;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: auto;
-  height: 30rem;
+  width: 100vw;
+  height: 100vh;
+}
+
+.login_card {
+  padding: 5rem 2rem;
   width: 22rem;
   background-color: white;
   border-radius: 10px;
@@ -68,10 +72,10 @@ async function userLogin() {
 .login_content {
   display: flex;
   justify-content: space-around;
-  margin-top: 5rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: auto;
   flex-direction: column;
   align-items: center;
 }
