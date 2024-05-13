@@ -9,7 +9,7 @@ definePageMeta({
     <div>
       <Header />
       <h2><strong style="color: black">Utilisateurs</strong> - Dashboard</h2>
-      <UsersForm />
+      <UsersCreateForm />
     </div>
   </main>
 </template>

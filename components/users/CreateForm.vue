@@ -1,8 +1,9 @@
 <script setup lang="ts">
-let jwt = null
-if (typeof localStorage !== 'undefined') {
-  jwt = localStorage.getItem('jwt')
-}
+import { handleSubmit } from '../../lib/api.js'
+
+let password = ref()
+let password_confirm = ref()
+let error = ref<any>(null)
 
 const data = {
   email: '',
@@ -11,30 +12,11 @@ const data = {
   lastname: '',
 }
 
-const runtimeConfig = useRuntimeConfig()
-const handleSubmit = async () => {
+async function userCreate() {
   try {
-    const { data: user, error } = await useFetch(
-      `${runtimeConfig.public.users}/create`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify(data),
-      },
-    )
-
-    if (error.value) {
-      console.error(error.value)
-      throw error
-    }
-
-    await navigateTo('/users')
+    await handleSubmit(data)
   } catch (err) {
-    console.error(err)
-    throw err
+    error.value = err
   }
 }
 </script>
@@ -51,14 +33,11 @@ const handleSubmit = async () => {
       /></NuxtLink>
       <div class="user_form_content">
         <h1>Ajouter un utilisateur</h1>
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="userCreate">
           <div class="email_field">
-            <label for="email"
-              >Email
-              <p style="color: red">*</p></label
-            >
+            <label for="email">Email <span style="color: red">*</span></label>
             <input
-              type="email"
+              type="text"
               id="email"
               v-model="data.email"
               autocomplete="mail"
@@ -66,8 +45,7 @@ const handleSubmit = async () => {
           </div>
           <div class="pass_field">
             <label for="password"
-              >Mot de passe
-              <p style="color: red">*</p></label
+              >Mot de passe <span style="color: red">*</span></label
             >
             <input
               type="password"
@@ -76,21 +54,35 @@ const handleSubmit = async () => {
               autocomplete="new-password"
             />
           </div>
+          <div class="pass_field">
+            <label for="password_confirm"
+              >Confirmer le mot de passe
+              <span style="color: red">*</span></label
+            >
+            <input
+              type="password"
+              id="password_confirm"
+              autocomplete="new-password"
+            />
+          </div>
           <div class="firstname_field">
-            <label for="firstname">Prénom</label>
+            <label for="firstname"
+              >Prénom <span style="color: red">*</span></label
+            >
             <input type="text" id="firstname" v-model="data.firstname" />
           </div>
           <div class="lastname_field">
             <label for="lastname"
-              >Nom de famille
-              <p style="color: red">*</p></label
+              >Nom de famille <span style="color: red">*</span></label
             >
             <input type="text" id="lastname" v-model="data.lastname" />
           </div>
           <div>
+            <p><span style="color: red">* </span>Champs requis</p>
             <button type="submit">Ajouter</button>
           </div>
         </form>
+        <p v-if="error" class="error">{{ error }}</p>
       </div>
     </div>
   </div>
@@ -102,12 +94,11 @@ const handleSubmit = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
 }
 
 .user_form_card {
-  padding: 5rem 2rem;
+  margin-top: 2rem;
+  padding: 2.5rem 2rem;
   width: 22rem;
   background-color: white;
   border-radius: 10px;
@@ -158,5 +149,9 @@ input {
   border-width: 0.1rem;
   padding: 0.5rem;
   width: 15rem;
+}
+
+.error {
+  color: red;
 }
 </style>
