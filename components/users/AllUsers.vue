@@ -54,7 +54,7 @@ const { data: users } = await useFetch<User[]>(
           <td>{{ user.lastname }}</td>
           <td>{{ user.firstname }}</td>
           <td>
-            <NuxtLink to="/users/user:id" class="link"
+            <NuxtLink :to="`/users/user/${user.id}`" class="link"
               ><img
                 src="../../assets/img/search_icon.png"
                 alt="search_icon"
