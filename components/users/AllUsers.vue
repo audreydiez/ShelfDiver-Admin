@@ -71,7 +71,7 @@ const { data: users } = await useFetch<User[]>(
                 width="32px"
                 height="32px"
             /></NuxtLink>
-            <NuxtLink to="/users/delete" class="link"
+            <NuxtLink :to="`/users/user/delete/${user.id}`" class="link"
               ><img
                 src="../../assets/img/delete_icon.png"
                 alt="delete_icon"
@@ -134,7 +134,7 @@ const { data: users } = await useFetch<User[]>(
   display: flex;
   flex-direction: row-reverse;
   justify-content: center;
-  margin-left: 36rem;
+  margin-left: 34rem;
 }
 
 @media (max-width: 992px) {
