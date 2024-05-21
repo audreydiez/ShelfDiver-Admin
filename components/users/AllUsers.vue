@@ -28,14 +28,17 @@ const { data: users } = await useFetch<User[]>(
 <template>
   <div class="users">
     <h2>Liste des Utilisateurs</h2>
-    <NuxtLink to="/users/new-user" class="add_link"
-      ><img
-        src="../../assets/img/add_icon.png"
-        alt="search_icon"
-        width="50px"
-        height="50px"
-    /></NuxtLink>
-    <table class="user-table">
+
+    <div class="add_container">
+      <NuxtLink to="/users/new-user" class="add_link"
+        ><img
+          src="../../assets/img/add_icon.png"
+          alt="search_icon"
+          width="50px"
+          height="50px"
+      /></NuxtLink>
+    </div>
+    <table class="user_table">
       <thead>
         <tr>
           <th>ID</th>
@@ -61,7 +64,7 @@ const { data: users } = await useFetch<User[]>(
                 width="32px"
                 height="32px"
             /></NuxtLink>
-            <NuxtLink to="/users/update" class="link"
+            <NuxtLink :to="`/users/user/update/${user.id}`" class="link"
               ><img
                 src="../../assets/img/edit_icon.png"
                 alt="edit_icon"
@@ -99,27 +102,27 @@ const { data: users } = await useFetch<User[]>(
   margin-bottom: 1rem;
 }
 
-.user-table {
+.user_table {
   margin: auto;
   border-collapse: collapse;
 }
 
-.user-table th,
-.user-table td {
+.user_table th,
+.user_table td {
   padding: 0.5rem;
   text-align: center;
 }
 
-.user-table th {
+.user_table th {
   background-color: #f2f2f2;
   font-weight: bold;
 }
 
-.user-table tr:nth-child(even) {
+.user_table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.user-table tr:hover {
+.user_table tr:hover {
   background-color: #e6e6e6;
 }
 
@@ -127,21 +130,30 @@ const { data: users } = await useFetch<User[]>(
   margin: 0.1rem;
 }
 
-.add_link {
-  margin-left: 73rem;
+.add_container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  margin-left: 36rem;
 }
 
 @media (max-width: 992px) {
-  .user-table {
+  .user_table {
     overflow: scroll;
   }
 
-  .user-table th,
-  .user-table td {
+  .user_table th,
+  .user_table td {
     text-align: left;
   }
+
   .link {
     display: inline-block;
+  }
+
+  .add_container {
+    justify-content: left;
+    margin-left: 0rem;
   }
 }
 </style>

@@ -1,7 +1,24 @@
-<script>
+<script setup lang="ts">
+import { jwtDecode } from 'jwt-decode'
+
 definePageMeta({
   middleware: 'dashboard-guard',
 })
+
+let jwt = null
+let decodedJwt: any = null
+
+if (typeof localStorage !== 'undefined') {
+  jwt = localStorage.getItem('jwt')
+}
+
+if (typeof jwt === 'string') {
+  decodedJwt = jwtDecode(jwt)
+}
+
+if (decodedJwt.sub != 'ADMIN') {
+  navigateTo('/dashboard')
+}
 </script>
 
 <template>

@@ -1,20 +1,53 @@
 <script setup lang="ts">
-import { handleSubmit } from '../../lib/api.js'
+import { handleUpdateSubmit } from '../../lib/api.js'
+let jwt = null
+if (typeof localStorage !== 'undefined') {
+  jwt = localStorage.getItem('jwt')
+}
+const runtimeConfig = useRuntimeConfig()
+const route = useRoute()
 
 let password = ref()
 let password_confirm = ref()
 let error = ref<any>(null)
 
+interface User {
+  email: string
+  firstname: string
+  lastname: string
+}
+
 const data = {
   email: '',
-  password: '',
   firstname: '',
   lastname: '',
 }
 
+const userData = reactive({
+  email: '',
+  firstname: '',
+  lastname: '',
+})
+
+const { data: fetchedData } = await useFetch<User>(
+  `${runtimeConfig.public.users}/user/${route.params.id}`,
+  {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  },
+)
+
+onMounted(async () => {
+  userData.email = fetchedData?.value?.email || ''
+  userData.firstname = fetchedData?.value?.firstname || ''
+  userData.lastname = fetchedData?.value?.lastname || ''
+})
+
 async function userCreate() {
   try {
-    await handleSubmit(data)
+    await handleUpdateSubmit(userData)
   } catch (err) {
     error.value = err
   }
@@ -32,25 +65,25 @@ async function userCreate() {
           height="32px"
       /></NuxtLink>
       <div class="user_form_content">
-        <h1>Ajouter un utilisateur</h1>
+        <h1>Modifier un utilisateur</h1>
         <form @submit.prevent="userCreate">
           <div class="email_field">
             <label for="email">Email <span style="color: red">*</span></label>
             <input
               type="text"
               id="email"
-              v-model="data.email"
+              v-model="userData.email"
               autocomplete="mail"
             />
           </div>
-          <div class="pass_field">
+          <!-- <div class="pass_field">
             <label for="password"
               >Mot de passe <span style="color: red">*</span></label
             >
             <input
               type="password"
               id="password"
-              v-model="data.password"
+              v-model="userData.password"
               autocomplete="new-password"
             />
           </div>
@@ -64,18 +97,18 @@ async function userCreate() {
               id="password_confirm"
               autocomplete="new-password"
             />
-          </div>
+          </div> -->
           <div class="firstname_field">
             <label for="firstname"
               >Prénom <span style="color: red">*</span></label
             >
-            <input type="text" id="firstname" v-model="data.firstname" />
+            <input type="text" id="firstname" v-model="userData.firstname" />
           </div>
           <div class="lastname_field">
             <label for="lastname"
               >Nom de famille <span style="color: red">*</span></label
             >
-            <input type="text" id="lastname" v-model="data.lastname" />
+            <input type="text" id="lastname" v-model="userData.lastname" />
           </div>
           <div>
             <p><span style="color: red">* </span>Champs requis</p>

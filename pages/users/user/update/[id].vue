@@ -39,7 +39,7 @@ const { data: user } = await useFetch(
     <div>
       <Header />
       <h2><strong style="color: black">Utilisateur</strong> - Dashboard</h2>
-      <UsersUserById />
+      <UsersUpdateForm />
     </div>
   </main>
 </template>
