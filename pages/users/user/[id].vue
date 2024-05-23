@@ -19,19 +19,6 @@ if (typeof jwt === 'string') {
 if (decodedJwt.sub != 'ADMIN') {
   navigateTo('/dashboard')
 }
-
-const runtimeConfig = useRuntimeConfig()
-const route = useRoute()
-const { data: user } = await useFetch(
-  `${runtimeConfig.public.users}/user/${route.params.id}`,
-  {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${jwt}`,
-    },
-  },
-)
 </script>
 
 <template>

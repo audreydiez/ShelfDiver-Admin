@@ -35,10 +35,10 @@ async function logOut() {
         <div class="circle">
           <div class="letter">{{ decodedJwt.username[0] }}</div>
         </div>
+        <div class="user_name">{{ decodedJwt.username }}</div>
         <div class="menu" :class="isOpen ? 'open' : 'close'" id="menu">
           <button @click="logOut()" class="menu_item">Déconnexion</button>
         </div>
-        <p class="user_name">{{ decodedJwt.username }}</p>
       </div>
     </header>
   </div>

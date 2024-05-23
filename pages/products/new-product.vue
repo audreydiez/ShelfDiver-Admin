@@ -1,7 +1,13 @@
-<script>
+<script setup lang="ts">
 definePageMeta({
   middleware: 'dashboard-guard',
 })
+
+let jwt = null
+
+if (typeof localStorage !== 'undefined') {
+  jwt = localStorage.getItem('jwt')
+}
 </script>
 
 <template>
@@ -9,7 +15,7 @@ definePageMeta({
     <div>
       <Header />
       <h2><strong style="color: black">Produits</strong> - Dashboard</h2>
-      <ProductsAllProducts />
+      <ProductsCreateProductForm />
     </div>
   </main>
 </template>
