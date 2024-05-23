@@ -25,8 +25,8 @@ if (decodedJwt.sub != 'ADMIN') {
   <main>
     <div>
       <Header />
-      <h2><strong style="color: black">Utilisateurs</strong> - Dashboard</h2>
-      <UsersAllUsers />
+      <h2><strong style="color: black">Utilisateur</strong> - Dashboard</h2>
+      <UsersUserById />
     </div>
   </main>
 </template>

@@ -1,21 +1,20 @@
 <script setup lang="ts">
 let jwt = null
-
 if (typeof localStorage !== 'undefined') {
   jwt = localStorage.getItem('jwt')
 }
 
-interface User {
+interface Product {
   id: number
-  email: string
-  role: string
-  lastname: string
-  firstname: string
+  brand: string
+  model: string
+  vehicle_type: string
+  price: number
 }
 
 const runtimeConfig = useRuntimeConfig()
-const { data: users } = await useFetch<User[]>(
-  `${runtimeConfig.public.users}/all_users`,
+const { data: products } = await useFetch<Product[]>(
+  `${runtimeConfig.public.products}/all_products`,
   {
     method: 'GET',
     headers: {
@@ -27,11 +26,11 @@ const { data: users } = await useFetch<User[]>(
 </script>
 
 <template>
-  <div class="users">
-    <h2>Liste des Utilisateurs</h2>
+  <div class="products">
+    <h2>Liste des Produits</h2>
 
     <div class="add_container">
-      <NuxtLink to="/users/new-user" class="add_link"
+      <NuxtLink to="/products/new-product" class="add_link"
         ><img
           src="../../assets/img/add_icon.png"
           alt="search_icon"
@@ -39,33 +38,35 @@ const { data: users } = await useFetch<User[]>(
           height="50px"
       /></NuxtLink>
     </div>
-    <table class="user_table">
+    <table class="product_table">
       <thead>
         <tr>
           <th>ID</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Nom</th>
-          <th>Prénom</th>
+          <th>Marque</th>
+          <th>Modèle</th>
+          <th>Type</th>
+          <th>Prix</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <td>{{ user.id }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.role }}</td>
-          <td>{{ user.lastname }}</td>
-          <td>{{ user.firstname }}</td>
+        <tr v-for="product in products" :key="product.id">
+          <td>{{ product.id }}</td>
+          <td>{{ product.brand }}</td>
+          <td>{{ product.model }}</td>
+          <td>{{ product.vehicle_type }}</td>
+          <td>{{ product.price }}</td>
           <td>
-            <NuxtLink :to="`/users/user/${user.id}`" class="link"
+            <NuxtLink :to="`/products/product/${product.id}`" class="link"
               ><img
                 src="../../assets/img/search_icon.png"
                 alt="search_icon"
                 width="32px"
                 height="32px"
             /></NuxtLink>
-            <NuxtLink :to="`/users/user/update/${user.id}`" class="link"
+            <NuxtLink
+              :to="`/products/product/update/${product.id}`"
+              class="link"
               ><img
                 src="../../assets/img/edit_icon.png"
                 alt="edit_icon"
@@ -73,8 +74,7 @@ const { data: users } = await useFetch<User[]>(
                 height="32px"
             /></NuxtLink>
             <NuxtLink
-              :to="`/users/user/delete/${user.id}`"
-              v-if="user.role === 'CONTRIBUTOR'"
+              :to="`/products/product/delete/${product.id}`"
               class="link"
               ><img
                 src="../../assets/img/delete_icon.png"
@@ -90,7 +90,7 @@ const { data: users } = await useFetch<User[]>(
 </template>
 
 <style lang="scss" scoped>
-.users {
+.products {
   display: flex;
   flex-direction: column;
   overflow: scroll;
@@ -106,28 +106,28 @@ const { data: users } = await useFetch<User[]>(
   margin-bottom: 1rem;
 }
 
-.user_table {
+.product_table {
   margin: auto;
   border-collapse: collapse;
   width: 100%;
 }
 
-.user_table th,
-.user_table td {
+.product_table th,
+.product_table td {
   padding: 0.5rem;
   text-align: center;
 }
 
-.user_table th {
+.product_table th {
   background-color: #f2f2f2;
   font-weight: bold;
 }
 
-.user_table tr:nth-child(even) {
+.product_table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.user_table tr:hover {
+.product_table tr:hover {
   background-color: #e6e6e6;
 }
 
@@ -142,12 +142,12 @@ const { data: users } = await useFetch<User[]>(
 }
 
 @media (max-width: 992px) {
-  .user_table {
+  .product_table {
     overflow: scroll;
   }
 
-  .user_table th,
-  .user_table td {
+  .product_table th,
+  .product_table td {
     text-align: left;
   }
 

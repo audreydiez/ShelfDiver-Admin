@@ -1,4 +1,4 @@
-<script>
+<script setup lang="ts">
 definePageMeta({
   middleware: 'dashboard-guard',
 })
@@ -8,8 +8,8 @@ definePageMeta({
   <main>
     <div>
       <Header />
-      <h2><strong style="color: black">Produits</strong> - Dashboard</h2>
-      <ProductsAllProducts />
+      <h2><strong style="color: black">Produit</strong> - Dashboard</h2>
+      <ProductsProductById />
     </div>
   </main>
 </template>

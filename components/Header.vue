@@ -22,7 +22,7 @@ async function logOut() {
 
 <template>
   <div class="header">
-    <header class="header-content">
+    <header class="header_content">
       <img
         src="../assets/img/logo.png"
         class="logo"
@@ -35,10 +35,10 @@ async function logOut() {
         <div class="circle">
           <div class="letter">{{ decodedJwt.username[0] }}</div>
         </div>
+        <div class="user_name">{{ decodedJwt.username }}</div>
         <div class="menu" :class="isOpen ? 'open' : 'close'" id="menu">
-          <button @click="logOut()" class="menu-item">Déconnexion</button>
+          <button @click="logOut()" class="menu_item">Déconnexion</button>
         </div>
-        <p class="user-name">{{ decodedJwt.username }}</p>
       </div>
     </header>
   </div>
@@ -89,7 +89,7 @@ async function logOut() {
   background-color: #22262f;
 }
 
-.header-content {
+.header_content {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -188,7 +188,7 @@ li {
   z-index: 1;
 }
 
-.menu-item {
+.menu_item {
   display: block;
   padding: 8px 16px;
   text-decoration: none;
@@ -198,11 +198,11 @@ li {
   cursor: pointer;
 }
 
-.menu-item:hover {
+.menu_item:hover {
   background-color: #f5f5f5;
 }
 
-.user-name {
+.user_name {
   color: white;
 }
 

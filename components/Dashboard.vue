@@ -2,7 +2,7 @@
 
 <template>
   <h2><strong style="color: black">Accueil</strong> - Dashboard</h2>
-  <div class="filler-image">
+  <div class="filler_image">
     <img src="../assets/img/logo_big.png" alt="logo" />
   </div>
 </template>
@@ -13,12 +13,12 @@ h2 {
   margin-left: 1rem;
 }
 
-.filler-image {
+.filler_image {
   display: flex;
   justify-content: center;
 }
 
-.filler-image > img {
+.filler_image > img {
   filter: invert(100%);
 }
 </style>
