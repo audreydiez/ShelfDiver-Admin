@@ -1,47 +1,73 @@
 <script setup lang="ts">
-import { handleSubmit } from '../../lib/api.js'
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { handleSubmit as apiHandleSubmit } from '../../lib/api.js'
 
-let password = ref()
-let password_confirm = ref()
 let error = ref<any>(null)
 
-const data = {
-  email: '',
-  password: '',
-  firstname: '',
-  lastname: '',
-}
+const schema = yup.object({
+  email: yup
+    .string()
+    .email('Email invalide')
+    .required('Veuillez entrer un email'),
+  password: yup
+    .string()
+    .required('Veuillez entrer un mot de passe')
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .matches(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
+    .matches(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
+    .matches(/\d/, 'Le mot de passe doit contenir au moins un chiffre')
+    .matches(
+      /[@$!%*?&]/,
+      'Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)',
+    ),
+  password_confirm: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Les mots de passe ne correspondent pas')
+    .required('Veuillez confirmer le mot de passe'),
+  firstname: yup.string().required('Veuillez entrer un prénom'),
+  lastname: yup.string().required('Veuillez entrer un nom'),
+})
 
-async function userCreate() {
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: schema,
+})
+
+const { value: email, errorMessage: emailError } = useField('email')
+const { value: password, errorMessage: passwordError } = useField('password')
+const { value: password_confirm, errorMessage: passwordConfirmError } =
+  useField('password_confirm')
+const { value: firstname, errorMessage: firstnameError } = useField('firstname')
+const { value: lastname, errorMessage: lastnameError } = useField('lastname')
+
+const userCreate = handleSubmit(async (values) => {
   try {
-    await handleSubmit(data)
+    await apiHandleSubmit(values)
+    resetForm()
   } catch (err) {
     error.value = err
   }
-}
+})
 </script>
 
 <template>
   <div class="container">
     <div class="user_form_card">
-      <NuxtLink to="/users" class="link"
-        ><img
+      <NuxtLink to="/users" class="link">
+        <img
           src="../../assets/img/back_icon.png"
           alt="back_icon"
           width="32px"
           height="32px"
-      /></NuxtLink>
+        />
+      </NuxtLink>
       <div class="user_form_content">
         <h1>Ajouter un utilisateur</h1>
         <form @submit.prevent="userCreate">
           <div class="email_field">
             <label for="email">Email <span style="color: red">*</span></label>
-            <input
-              type="text"
-              id="email"
-              v-model="data.email"
-              autocomplete="mail"
-            />
+            <input type="text" id="email" v-model="email" autocomplete="mail" />
+            <span v-if="emailError" class="error">{{ emailError }}</span>
           </div>
           <div class="pass_field">
             <label for="password"
@@ -50,9 +76,10 @@ async function userCreate() {
             <input
               type="password"
               id="password"
-              v-model="data.password"
+              v-model="password"
               autocomplete="new-password"
             />
+            <span v-if="passwordError" class="error">{{ passwordError }}</span>
           </div>
           <div class="pass_field">
             <label for="password_confirm"
@@ -62,20 +89,28 @@ async function userCreate() {
             <input
               type="password"
               id="password_confirm"
+              v-model="password_confirm"
               autocomplete="new-password"
             />
+            <span v-if="passwordConfirmError" class="error">{{
+              passwordConfirmError
+            }}</span>
           </div>
           <div class="firstname_field">
             <label for="firstname"
               >Prénom <span style="color: red">*</span></label
             >
-            <input type="text" id="firstname" v-model="data.firstname" />
+            <input type="text" id="firstname" v-model="firstname" />
+            <span v-if="firstnameError" class="error">{{
+              firstnameError
+            }}</span>
           </div>
           <div class="lastname_field">
             <label for="lastname"
               >Nom de famille <span style="color: red">*</span></label
             >
-            <input type="text" id="lastname" v-model="data.lastname" />
+            <input type="text" id="lastname" v-model="lastname" />
+            <span v-if="lastnameError" class="error">{{ lastnameError }}</span>
           </div>
           <div>
             <p><span style="color: red">* </span>Champs requis</p>

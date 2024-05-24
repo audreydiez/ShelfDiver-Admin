@@ -1,14 +1,9 @@
 <script setup lang="ts">
+import { ref, reactive, watch } from 'vue'
+import { useForm, useField } from 'vee-validate'
+import * as yup from 'yup'
 import { handleUpdateSubmit } from '../../lib/api.js'
-let jwt = null
-if (typeof localStorage !== 'undefined') {
-  jwt = localStorage.getItem('jwt')
-}
-const runtimeConfig = useRuntimeConfig()
-const route = useRoute()
 
-let password = ref()
-let password_confirm = ref()
 let error = ref<any>(null)
 
 interface User {
@@ -17,11 +12,15 @@ interface User {
   lastname: string
 }
 
-const data = {
-  email: '',
-  firstname: '',
-  lastname: '',
-}
+const schema = yup.object({
+  email: yup.string().email('Invalid email').required('Email is required'),
+  firstname: yup.string().required('First name is required'),
+  lastname: yup.string().required('Last name is required'),
+})
+
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: schema,
+})
 
 const userData = reactive({
   email: '',
@@ -29,44 +28,73 @@ const userData = reactive({
   lastname: '',
 })
 
-const { data: fetchedData } = await useFetch<User>(
-  `${runtimeConfig.public.users}/user/${route.params.id}`,
-  {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${jwt}`,
-    },
-  },
-)
+const {
+  value: email,
+  errorMessage: emailError,
+  setValue: setEmail,
+} = useField('email', undefined, { initialValue: userData.email })
+const {
+  value: firstname,
+  errorMessage: firstnameError,
+  setValue: setFirstname,
+} = useField('firstname', undefined, { initialValue: userData.firstname })
+const {
+  value: lastname,
+  errorMessage: lastnameError,
+  setValue: setLastname,
+} = useField('lastname', undefined, { initialValue: userData.lastname })
 
+watch(userData, (newValue) => {
+  setEmail(newValue.email)
+  setFirstname(newValue.firstname)
+  setLastname(newValue.lastname)
+})
+
+// Fetch user data and fill the form fields
 onMounted(async () => {
+  const runtimeConfig = useRuntimeConfig()
+  const route = useRoute()
+  const jwt = localStorage.getItem('jwt')
+
+  const { data: fetchedData } = await useFetch<User>(
+    `${runtimeConfig.public.users}/user/${route.params.id}`,
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    },
+  )
+
   userData.email = fetchedData?.value?.email || ''
   userData.firstname = fetchedData?.value?.firstname || ''
   userData.lastname = fetchedData?.value?.lastname || ''
 })
 
-async function userCreate() {
+const userUpdate = handleSubmit(async () => {
   try {
     await handleUpdateSubmit(userData)
+    resetForm()
   } catch (err) {
     error.value = err
   }
-}
+})
 </script>
 
 <template>
   <div class="container">
     <div class="user_form_card">
-      <NuxtLink to="/users" class="link"
-        ><img
+      <NuxtLink to="/users" class="link">
+        <img
           src="../../assets/img/back_icon.png"
           alt="back_icon"
           width="32px"
           height="32px"
-      /></NuxtLink>
+        />
+      </NuxtLink>
       <div class="user_form_content">
         <h1>Modifier un utilisateur</h1>
-        <form @submit.prevent="userCreate">
+        <form @submit.prevent="userUpdate">
           <div class="email_field">
             <label for="email">Email <span style="color: red">*</span></label>
             <input
@@ -75,44 +103,27 @@ async function userCreate() {
               v-model="userData.email"
               autocomplete="mail"
             />
+            <span v-if="emailError" class="error">{{ emailError }}</span>
           </div>
-          <!-- <div class="pass_field">
-            <label for="password"
-              >Mot de passe <span style="color: red">*</span></label
-            >
-            <input
-              type="password"
-              id="password"
-              v-model="userData.password"
-              autocomplete="new-password"
-            />
-          </div>
-          <div class="pass_field">
-            <label for="password_confirm"
-              >Confirmer le mot de passe
-              <span style="color: red">*</span></label
-            >
-            <input
-              type="password"
-              id="password_confirm"
-              autocomplete="new-password"
-            />
-          </div> -->
           <div class="firstname_field">
             <label for="firstname"
               >Prénom <span style="color: red">*</span></label
             >
             <input type="text" id="firstname" v-model="userData.firstname" />
+            <span v-if="firstnameError" class="error">{{
+              firstnameError
+            }}</span>
           </div>
           <div class="lastname_field">
             <label for="lastname"
               >Nom de famille <span style="color: red">*</span></label
             >
             <input type="text" id="lastname" v-model="userData.lastname" />
+            <span v-if="lastnameError" class="error">{{ lastnameError }}</span>
           </div>
           <div>
             <p><span style="color: red">* </span>Champs requis</p>
-            <button type="submit">Ajouter</button>
+            <button type="submit">Modifier</button>
           </div>
         </form>
         <p v-if="error" class="error">{{ error }}</p>
