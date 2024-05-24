@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
 let jwt = null
 if (typeof localStorage !== 'undefined') {
   jwt = localStorage.getItem('jwt')
@@ -10,24 +12,35 @@ interface User {
   role: string
   lastname: string
   firstname: string
-  created_at: Date
-  created_by: number
-  updated_at: Date
-  updated_by: number
+  created_at: string
+  created_by: User
+  updated_at: string
+  updated_by: User
 }
 
 const runtimeConfig = useRuntimeConfig()
 const route = useRoute()
-const { data: user } = await useFetch<User>(
-  `${runtimeConfig.public.users}/user/${route.params.id}`,
-  {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${jwt}`,
-    },
-  },
-)
+
+const user = ref<User | null>(null)
+
+const fetchUserData = async () => {
+  try {
+    const { data } = await useFetch<User>(
+      `${runtimeConfig.public.users}/user/${route.params.id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+      },
+    )
+    user.value = data.value
+  } catch (error) {
+    console.error('Error fetching user data:', error)
+  }
+}
+onMounted(fetchUserData)
 </script>
 
 <template>
@@ -41,17 +54,31 @@ const { data: user } = await useFetch<User>(
           height="32px"
       /></NuxtLink>
       <div class="user_id_content">
-        <div class="user_details">
+        <div class="user_details" v-if="user">
           <h1>Détails de l'utilisateur</h1>
-          <p><strong>ID :</strong> {{ user?.id }}</p>
-          <p><strong>Rôle :</strong> {{ user?.role }}</p>
-          <p><strong>Nom :</strong> {{ user?.lastname }}</p>
-          <p><strong>Prénom :</strong> {{ user?.firstname }}</p>
-          <p><strong>Email :</strong> {{ user?.email }}</p>
-          <p><strong>Créé le :</strong> {{ user?.created_at }}</p>
-          <p><strong>Créé par :</strong> {{ user?.created_by }}</p>
-          <p><strong>Mis à jour le :</strong> {{ user?.updated_at }}</p>
-          <p><strong>Mis à jour par :</strong> {{ user?.updated_by }}</p>
+          <p><strong>ID :</strong> {{ user.id }}</p>
+          <p><strong>Rôle :</strong> {{ user.role }}</p>
+          <p><strong>Nom :</strong> {{ user.lastname }}</p>
+          <p><strong>Prénom :</strong> {{ user.firstname }}</p>
+          <p><strong>Email :</strong> {{ user.email }}</p>
+          <p><strong>Créé le :</strong> {{ user.created_at }}</p>
+          <p>
+            <strong>Créé par :</strong>
+            {{
+              user.created_by
+                ? user.created_by.firstname + ' ' + user.created_by.lastname
+                : 'N/A'
+            }}
+          </p>
+          <p><strong>Mis à jour le :</strong> {{ user.updated_at }}</p>
+          <p>
+            <strong>Mis à jour par :</strong>
+            {{
+              user.updated_by
+                ? user.updated_by.firstname + ' ' + user.updated_by.lastname
+                : 'N/A'
+            }}
+          </p>
         </div>
       </div>
     </div>

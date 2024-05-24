@@ -5,6 +5,10 @@ import * as yup from 'yup'
 import { handleUpdateSubmit } from '../../lib/api.js'
 
 let error = ref<any>(null)
+let jwt = null
+if (typeof localStorage !== 'undefined') {
+  jwt = localStorage.getItem('jwt')
+}
 
 interface User {
   email: string
@@ -57,7 +61,6 @@ watch(userData, (newValue) => {
 onMounted(async () => {
   const runtimeConfig = useRuntimeConfig()
   const route = useRoute()
-  const jwt = localStorage.getItem('jwt')
 
   const { data: fetchedData } = await useFetch<User>(
     `${runtimeConfig.public.users}/user/${route.params.id}`,
