@@ -1,35 +1,76 @@
 <script setup lang="ts">
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
 import { handleProductSubmit } from '../../lib/api.js'
 
 let error = ref<any>(null)
+const imagePreviewUrl = ref<string | null>(null)
 
-const data = ref({
-  brand: '',
-  model: '',
-  vehicle_type: '',
-  description: '',
-  image: null as File | null,
-  price: '',
-  motor_type: '',
-  energy: '',
-  transmission: '',
-  power: '',
-  fiscal_power: '',
+const schema = yup.object({
+  brand: yup.string().required('Veuillez sélectionner une marque'),
+  model: yup.string().required('Veuillez entrer un modèle'),
+  vehicle_type: yup
+    .string()
+    .required('Veuillez sélectionner un type de véhicule'),
+  description: yup.string(),
+  image: yup.mixed().required('Veuillez sélectionner une image'),
+  price: yup
+    .number()
+    .typeError('Le prix doit être un nombre')
+    .required('Veuillez entrer un prix')
+    .positive('Le prix doit être positif'),
+  motor_type: yup.string(),
+  energy: yup.string().required("Veuillez sélectionner un type d'énergie"),
+  transmission: yup
+    .string()
+    .required('Veuillez sélectionner un type de transmission'),
+  power: yup
+    .number()
+    .typeError('La puissance doit être un nombre')
+    .positive('La puissance doit être positive'),
+  fiscal_power: yup
+    .number()
+    .typeError('La puissance fiscale doit être un nombre')
+    .positive('La puissance fiscale doit être positive'),
 })
 
-async function productCreate() {
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: schema,
+})
+
+const { value: brand, errorMessage: brandError } = useField('brand')
+const { value: model, errorMessage: modelError } = useField('model')
+const { value: vehicle_type, errorMessage: vehicleTypeError } =
+  useField('vehicle_type')
+const { value: description } = useField('description')
+const { value: image, errorMessage: imageError } = useField('image')
+const { value: price, errorMessage: priceError } = useField('price')
+const { value: motor_type } = useField('motor_type')
+const { value: energy, errorMessage: energyError } = useField('energy')
+const { value: transmission, errorMessage: transmissionError } =
+  useField('transmission')
+const { value: power, errorMessage: powerError } = useField('power')
+const { value: fiscal_power, errorMessage: fiscalPowerError } =
+  useField('fiscal_power')
+
+const productCreate = handleSubmit(async (values) => {
   try {
-    await handleProductSubmit(data.value)
+    await handleProductSubmit(values)
+    resetForm()
+    imagePreviewUrl.value = null
   } catch (err) {
     error.value = err
   }
-}
+})
 
 function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   if (file) {
-    data.value.image = file
+    image.value = file
+    imagePreviewUrl.value = URL.createObjectURL(file)
+  } else {
+    imagePreviewUrl.value = null
   }
 }
 </script>
@@ -37,19 +78,21 @@ function handleFileChange(event: Event) {
 <template>
   <div class="container_1">
     <div class="product_form_card">
-      <NuxtLink to="/products" class="link"
-        ><img
+      <NuxtLink to="/products" class="link">
+        <img
           src="../../assets/img/back_icon.png"
           alt="back_icon"
           width="32px"
           height="32px"
-      /></NuxtLink>
+        />
+      </NuxtLink>
       <div class="product_form_content">
         <h1>Ajouter un produit</h1>
         <form @submit.prevent="productCreate">
           <div class="brand_field">
-            <label for="email">Marque <span style="color: red">*</span></label>
-            <select id="brands" name="brands" v-model="data.brand">
+            <label for="brand">Marque <span style="color: red">*</span></label>
+            <select id="brand" name="brand" v-model="brand">
+              <option value="">Sélectionnez une marque</option>
               <option value="Peugeot">Peugeot</option>
               <option value="Renault">Renault</option>
               <option value="Citroen">Citroen</option>
@@ -60,16 +103,23 @@ function handleFileChange(event: Event) {
               <option value="Lamborghini">Lamborghini</option>
               <option value="Tesla">Tesla</option>
             </select>
+            <span v-if="brandError" class="error">{{ brandError }}</span>
           </div>
           <div class="model_field">
             <label for="model">Modèle <span style="color: red">*</span></label>
-            <input type="text" id="model" v-model="data.model" />
+            <input type="text" id="model" v-model="model" />
+            <span v-if="modelError" class="error">{{ modelError }}</span>
           </div>
           <div class="type_field">
-            <label for="type"
+            <label for="vehicle_type"
               >Type de véhicule <span style="color: red">*</span></label
             >
-            <select id="types" name="types" v-model="data.vehicle_type">
+            <select
+              id="vehicle_type"
+              name="vehicle_type"
+              v-model="vehicle_type"
+            >
+              <option value="">Sélectionnez un type de véhicule</option>
               <option value="Berline">Berline</option>
               <option value="Compacte">Compacte</option>
               <option value="Citadine">Citadine</option>
@@ -79,66 +129,85 @@ function handleFileChange(event: Event) {
               <option value="4x4">4x4</option>
               <option value="SUV">SUV</option>
             </select>
+            <span v-if="vehicleTypeError" class="error">{{
+              vehicleTypeError
+            }}</span>
           </div>
           <div class="description_field">
             <label for="description">Description</label>
             <textarea
               name="description"
               id="description"
-              v-model="data.description"
+              v-model="(description as string)"
             ></textarea>
           </div>
           <div class="price_field">
             <label for="price">Prix <span style="color: red">*</span></label>
-            <input type="number" id="price" v-model="data.price" />
+            <input type="text" id="price" v-model="price" />
+            <span v-if="priceError" class="error">{{ priceError }}</span>
           </div>
           <div class="motor_field">
-            <label for="motor">Motorisation</label>
-            <input type="text" id="motor" v-model="data.motor_type" />
+            <label for="motor_type">Motorisation</label>
+            <input type="text" id="motor_type" v-model="motor_type" />
           </div>
           <div class="energy_field">
             <label for="energy">Energie<span style="color: red">*</span></label>
-            <select id="energies" name="energies" v-model="data.energy">
+            <select id="energy" name="energy" v-model="energy">
+              <option value="">Sélectionnez un type d'énergie</option>
               <option value="Essence">Essence</option>
               <option value="Diesel">Diesel</option>
               <option value="Electrique">Electrique</option>
               <option value="Hybride">Hybride</option>
               <option value="GPL">GPL</option>
             </select>
+            <span v-if="energyError" class="error">{{ energyError }}</span>
           </div>
           <div class="transmission_field">
             <label for="transmission"
               >Transmission<span style="color: red">*</span></label
             >
             <select
-              id="transmissions"
-              name="transmissions"
-              v-model="data.transmission"
+              id="transmission"
+              name="transmission"
+              v-model="transmission"
             >
+              <option value="">Sélectionnez un type de transmission</option>
               <option value="Automatique">Automatique</option>
               <option value="Manuelle">Manuelle</option>
             </select>
+            <span v-if="transmissionError" class="error">{{
+              transmissionError
+            }}</span>
           </div>
           <div class="power_field">
             <label for="power">Puissance (en ch)</label>
-            <input type="number" id="power" v-model="data.power" />
+            <input type="text" id="power" v-model="power" />
+            <span v-if="powerError" class="error">{{ powerError }}</span>
           </div>
           <div class="fiscal_power_field">
             <label for="fiscal_power">Puissance Fiscale (en CV)</label>
-            <input
-              type="number"
-              id="fiscal_power"
-              v-model="data.fiscal_power"
-            />
+            <input type="text" id="fiscal_power" v-model="fiscal_power" />
+            <span v-if="fiscalPowerError" class="error">{{
+              fiscalPowerError
+            }}</span>
           </div>
           <div class="image_field">
-            <label for="image">Photo</label>
+            <label for="image">Photo <span style="color: red">*</span></label>
             <input
               type="file"
               id="image"
               name="image"
               @change="handleFileChange"
             />
+            <span v-if="imageError" class="error">{{ imageError }}</span>
+            <div v-if="imagePreviewUrl">
+              <img
+                :src="imagePreviewUrl"
+                alt="Image Preview"
+                width="200px"
+                height="auto"
+              />
+            </div>
           </div>
           <div>
             <p><span style="color: red">* </span>Champs requis</p>
