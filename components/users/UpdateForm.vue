@@ -13,9 +13,12 @@ interface User {
 }
 
 const schema = yup.object({
-  email: yup.string().email('Invalid email').required('Email is required'),
-  firstname: yup.string().required('First name is required'),
-  lastname: yup.string().required('Last name is required'),
+  email: yup
+    .string()
+    .email('Email invalide')
+    .required('Veuillez entrer un email'),
+  firstname: yup.string().required('Veuillez entrer un prénom'),
+  lastname: yup.string().required('Veuillez entrer un nom'),
 })
 
 const { handleSubmit, resetForm } = useForm({
