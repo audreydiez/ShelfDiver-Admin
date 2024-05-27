@@ -1,7 +1,21 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
 let jwt = null
 if (typeof localStorage !== 'undefined') {
   jwt = localStorage.getItem('jwt')
+}
+
+interface User {
+  id: number
+  email: string
+  role: string
+  lastname: string
+  firstname: string
+  created_at: string
+  created_by: User | null
+  updated_at: string
+  updated_by: User | null
 }
 
 interface Product {
@@ -18,23 +32,35 @@ interface Product {
   power: number
   fiscal_power: number
   created_at: Date
-  created_by: number
+  created_by: User | null
   updated_at: Date
-  updated_by: number
+  updated_by: User | null
 }
 
 const runtimeConfig = useRuntimeConfig()
 const route = useRoute()
-const { data: product } = await useFetch<Product>(
-  `${runtimeConfig.public.products}/product/${route.params.id}`,
-  {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${jwt}`,
-    },
-  },
-)
+
+const product = ref<Product | null>(null)
+
+const fetchProductData = async () => {
+  try {
+    const { data } = await useFetch<Product>(
+      `${runtimeConfig.public.products}/product/${route.params.id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+      },
+    )
+    product.value = data.value
+  } catch (error) {
+    console.error('Error fetching product data:', error)
+  }
+}
+
+onMounted(fetchProductData)
 </script>
 
 <template>
@@ -70,9 +96,27 @@ const { data: product } = await useFetch<Product>(
             <strong>Puissance fiscale :</strong> {{ product?.fiscal_power }}CV
           </p>
           <p><strong>Créé le :</strong> {{ product?.created_at }}</p>
-          <p><strong>Créé par :</strong> {{ product?.created_by }}</p>
+          <p>
+            <strong>Créé par :</strong>
+            {{
+              product?.created_by
+                ? product.created_by.firstname +
+                  ' ' +
+                  product.created_by.lastname
+                : 'N/A'
+            }}
+          </p>
           <p><strong>Mis à jour le :</strong> {{ product?.updated_at }}</p>
-          <p><strong>Mis à jour par :</strong> {{ product?.updated_by }}</p>
+          <p>
+            <strong>Mis à jour par :</strong>
+            {{
+              product?.updated_by
+                ? product.updated_by.firstname +
+                  ' ' +
+                  product.updated_by.lastname
+                : 'N/A'
+            }}
+          </p>
         </div>
       </div>
     </div>
