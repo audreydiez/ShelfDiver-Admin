@@ -24,7 +24,7 @@ const schema = yup.object({
   consumption: yup
     .number()
     .typeError('La consommation doit être un nombre')
-    .positive('La consommation doit être positive'),
+    .moreThan(-1, 'La consommation doit être positive ou égale à 0'),
   transmission: yup
     .string()
     .required('Veuillez sélectionner un type de transmission'),
