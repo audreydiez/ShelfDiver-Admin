@@ -12,6 +12,7 @@ if (typeof localStorage !== 'undefined') {
 
 interface User {
   email: string
+  password: string
   firstname: string
   lastname: string
 }
@@ -21,6 +22,21 @@ const schema = yup.object({
     .string()
     .email('Email invalide')
     .required('Veuillez entrer un email'),
+  password: yup
+    .string()
+    .required('Veuillez entrer un mot de passe')
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .matches(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
+    .matches(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
+    .matches(/\d/, 'Le mot de passe doit contenir au moins un chiffre')
+    .matches(
+      /[@$!%*?&]/,
+      'Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)',
+    ),
+  password_confirm: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Les mots de passe ne correspondent pas')
+    .required('Veuillez confirmer le mot de passe'),
   firstname: yup.string().required('Veuillez entrer un prénom'),
   lastname: yup.string().required('Veuillez entrer un nom'),
 })
@@ -29,8 +45,9 @@ const { handleSubmit, resetForm } = useForm({
   validationSchema: schema,
 })
 
-const userData = reactive({
+const userData = reactive<User>({
   email: '',
+  password: '',
   firstname: '',
   lastname: '',
 })
@@ -40,6 +57,13 @@ const {
   errorMessage: emailError,
   setValue: setEmail,
 } = useField('email', undefined, { initialValue: userData.email })
+const {
+  value: password,
+  errorMessage: passwordError,
+  setValue: setPassword,
+} = useField('password')
+const { value: password_confirm, errorMessage: passwordConfirmError } =
+  useField('password_confirm')
 const {
   value: firstname,
   errorMessage: firstnameError,
@@ -53,6 +77,7 @@ const {
 
 watch(userData, (newValue) => {
   setEmail(newValue.email)
+  setPassword(newValue.password)
   setFirstname(newValue.firstname)
   setLastname(newValue.lastname)
 })
@@ -107,9 +132,36 @@ const userUpdate = handleSubmit(async () => {
               type="text"
               id="email"
               v-model="userData.email"
-              autocomplete="mail"
+              autocomplete="off"
             />
             <span v-if="emailError" class="error">{{ emailError }}</span>
+          </div>
+          <div class="pass_field">
+            <label for="password"
+              >Mot de passe <span style="color: red">*</span></label
+            >
+            <input
+              type="password"
+              id="password"
+              v-model="userData.password"
+              autocomplete="off"
+            />
+            <span v-if="passwordError" class="error">{{ passwordError }}</span>
+          </div>
+          <div class="pass_field">
+            <label for="password_confirm"
+              >Confirmer le mot de passe
+              <span style="color: red">*</span></label
+            >
+            <input
+              type="password"
+              id="password_confirm"
+              v-model="password_confirm"
+              autocomplete="off"
+            />
+            <span v-if="passwordConfirmError" class="error">{{
+              passwordConfirmError
+            }}</span>
           </div>
           <div class="firstname_field">
             <label for="firstname"
