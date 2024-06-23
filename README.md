@@ -9,12 +9,9 @@ Admin front-side of the ShelfDiver app, built with Nuxt3. Serves as the main acc
 
 #### Source link to install Node.js : https://nodejs.org/en/learn/getting-started/how-to-install-nodejs
 
-#### Source link to install MySQL : https://dev.mysql.com/downloads/installer/
-
 ## Libraries
 
 This project uses some libraries, listed as below:
-
 - sass
 - vueuse
 - vee-validate
