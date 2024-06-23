@@ -22,21 +22,45 @@ const schema = yup.object({
     .string()
     .email('Email invalide')
     .required('Veuillez entrer un email'),
-  password: yup
-    .string()
-    .required('Veuillez entrer un mot de passe')
-    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
-    .matches(/[A-Z]/, 'Le mot de passe doit contenir au moins une majuscule')
-    .matches(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
-    .matches(/\d/, 'Le mot de passe doit contenir au moins un chiffre')
-    .matches(
-      /[@$!%*?&]/,
-      'Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)',
-    ),
+  password: yup.string().test('password-validation', (value, context) => {
+    if (!value) return true // Pass if empty
+    if (value.length < 8) {
+      return context.createError({
+        message: 'Le mot de passe doit contenir au moins 8 caractères',
+      })
+    }
+    if (!/[A-Z]/.test(value)) {
+      return context.createError({
+        message: 'Le mot de passe doit contenir au moins une majuscule',
+      })
+    }
+    if (!/[a-z]/.test(value)) {
+      return context.createError({
+        message: 'Le mot de passe doit contenir au moins une minuscule',
+      })
+    }
+    if (!/\d/.test(value)) {
+      return context.createError({
+        message: 'Le mot de passe doit contenir au moins un chiffre',
+      })
+    }
+    if (!/[@$!%*?&]/.test(value)) {
+      return context.createError({
+        message:
+          'Le mot de passe doit contenir au moins un caractère spécial (@$!%*?&)',
+      })
+    }
+    return true
+  }),
   password_confirm: yup
     .string()
-    .oneOf([yup.ref('password')], 'Les mots de passe ne correspondent pas')
-    .required('Veuillez confirmer le mot de passe'),
+    .test(
+      'passwords-match',
+      'Les mots de passe ne correspondent pas',
+      function (value) {
+        return !this.parent.password || value === this.parent.password
+      },
+    ),
   firstname: yup.string().required('Veuillez entrer un prénom'),
   lastname: yup.string().required('Veuillez entrer un nom'),
 })
@@ -102,9 +126,14 @@ onMounted(async () => {
   userData.lastname = fetchedData?.value?.lastname || ''
 })
 
-const userUpdate = handleSubmit(async () => {
+const userUpdate = handleSubmit(async (values) => {
   try {
-    await handleUpdateSubmit(userData)
+    // Only include password in userData if it's not empty
+    const updatedUserData = {
+      ...userData,
+      password: values.password || undefined,
+    }
+    await handleUpdateSubmit(updatedUserData)
     resetForm()
   } catch (err) {
     error.value = err
