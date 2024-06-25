@@ -4,20 +4,19 @@ Admin front-side of the ShelfDiver app, built with Nuxt3. Serves as the main acc
 
 ## Prerequisites
 
-* Please make sure that Node.js (version >= 18) is installed on your operating system.
-* This project uses a MySQL Database. I recommend having the latest version of it. If you don't have any MySQL Server installed, you can either follow the link below or choose your own server.
+- Please make sure that Node.js (version >= 18) is installed on your operating system.
+- This project uses a MySQL Database. I recommend having the latest version of it. If you don't have any MySQL Server installed, you can either follow the link below or choose your own server.
 
 #### Source link to install Node.js : https://nodejs.org/en/learn/getting-started/how-to-install-nodejs
-#### Source link to install MySQL : https://dev.mysql.com/downloads/installer/
 
 ## Libraries
 
 This project uses some libraries, listed as below:
-* sass
-* vueuse
-* vee-validate
-* jwt-decode
-* yup
+- sass
+- vueuse
+- vee-validate
+- jwt-decode
+- yup
 
 ## Installation & Running
 

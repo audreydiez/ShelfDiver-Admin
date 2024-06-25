@@ -66,7 +66,7 @@ const userCreate = handleSubmit(async (values) => {
         <form @submit.prevent="userCreate">
           <div class="email_field">
             <label for="email">Email <span style="color: red">*</span></label>
-            <input type="text" id="email" v-model="email" autocomplete="mail" />
+            <input type="text" id="email" v-model="email" autocomplete="off" />
             <span v-if="emailError" class="error">{{ emailError }}</span>
           </div>
           <div class="pass_field">
@@ -77,7 +77,7 @@ const userCreate = handleSubmit(async (values) => {
               type="password"
               id="password"
               v-model="password"
-              autocomplete="new-password"
+              autocomplete="off"
             />
             <span v-if="passwordError" class="error">{{ passwordError }}</span>
           </div>
@@ -90,7 +90,7 @@ const userCreate = handleSubmit(async (values) => {
               type="password"
               id="password_confirm"
               v-model="password_confirm"
-              autocomplete="new-password"
+              autocomplete="off"
             />
             <span v-if="passwordConfirmError" class="error">{{
               passwordConfirmError

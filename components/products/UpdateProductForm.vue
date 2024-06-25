@@ -19,6 +19,7 @@ interface Product {
   price: number
   motor_type: string
   energy: string
+  consumption: number
   transmission: string
   power: number
   fiscal_power: number
@@ -42,6 +43,10 @@ const schema = yup.object({
     .positive('Le prix doit être positif'),
   motor_type: yup.string(),
   energy: yup.string().required("Veuillez sélectionner un type d'énergie"),
+  consumption: yup
+    .number()
+    .typeError('La consommation doit être un nombre')
+    .moreThan(-1, 'La consommation doit être positive ou égale à 0'),
   transmission: yup
     .string()
     .required('Veuillez sélectionner un type de transmission'),
@@ -68,6 +73,8 @@ const { value: image, errorMessage: imageError } = useField('image')
 const { value: price, errorMessage: priceError } = useField('price')
 const { value: motor_type } = useField('motor_type')
 const { value: energy, errorMessage: energyError } = useField('energy')
+const { value: consumption, errorMessage: consumptionError } =
+  useField('consumption')
 const { value: transmission, errorMessage: transmissionError } =
   useField('transmission')
 const { value: power, errorMessage: powerError } = useField('power')
@@ -102,6 +109,7 @@ onMounted(async () => {
   price.value = fetchedData?.value?.price || 0
   motor_type.value = fetchedData?.value?.motor_type || ''
   energy.value = fetchedData?.value?.energy || ''
+  consumption.value = fetchedData?.value?.consumption || 0
   transmission.value = fetchedData?.value?.transmission || ''
   power.value = fetchedData?.value?.power || 0
   fiscal_power.value = fetchedData?.value?.fiscal_power || 0
@@ -208,6 +216,15 @@ function handleFileChange(event: Event) {
               <option value="GPL">GPL</option>
             </select>
             <span v-if="energyError" class="error">{{ energyError }}</span>
+          </div>
+          <div class="consumption_field">
+            <label for="consumption"
+              >Prix <span style="color: red">*</span></label
+            >
+            <input type="text" id="consumption" v-model="consumption" />
+            <span v-if="consumptionError" class="error">{{
+              consumptionError
+            }}</span>
           </div>
           <div class="transmission_field">
             <label for="transmission"

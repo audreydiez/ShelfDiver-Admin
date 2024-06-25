@@ -17,6 +17,7 @@ function toggleMenu(): void {
 async function logOut() {
   await logout()
   await navigateTo('/login')
+  window.location.reload()
 }
 </script>
 

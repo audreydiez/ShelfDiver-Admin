@@ -21,6 +21,10 @@ const schema = yup.object({
     .positive('Le prix doit être positif'),
   motor_type: yup.string(),
   energy: yup.string().required("Veuillez sélectionner un type d'énergie"),
+  consumption: yup
+    .number()
+    .typeError('La consommation doit être un nombre')
+    .moreThan(-1, 'La consommation doit être positive ou égale à 0'),
   transmission: yup
     .string()
     .required('Veuillez sélectionner un type de transmission'),
@@ -47,6 +51,8 @@ const { value: image, errorMessage: imageError } = useField('image')
 const { value: price, errorMessage: priceError } = useField('price')
 const { value: motor_type } = useField('motor_type')
 const { value: energy, errorMessage: energyError } = useField('energy')
+const { value: consumption, errorMessage: consumptionError } =
+  useField('consumption')
 const { value: transmission, errorMessage: transmissionError } =
   useField('transmission')
 const { value: power, errorMessage: powerError } = useField('power')
@@ -142,7 +148,9 @@ function handleFileChange(event: Event) {
             ></textarea>
           </div>
           <div class="price_field">
-            <label for="price">Prix <span style="color: red">*</span></label>
+            <label for="price"
+              >Prix (en €) <span style="color: red">*</span></label
+            >
             <input type="text" id="price" v-model="price" />
             <span v-if="priceError" class="error">{{ priceError }}</span>
           </div>
@@ -161,6 +169,13 @@ function handleFileChange(event: Event) {
               <option value="GPL">GPL</option>
             </select>
             <span v-if="energyError" class="error">{{ energyError }}</span>
+          </div>
+          <div class="consumption_field">
+            <label for="consumption">Consommation (en L/100)</label>
+            <input type="text" id="consumption" v-model="consumption" />
+            <span v-if="consumptionError" class="error">{{
+              consumptionError
+            }}</span>
           </div>
           <div class="transmission_field">
             <label for="transmission"
